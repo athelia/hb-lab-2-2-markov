@@ -90,7 +90,22 @@ def make_text(chains):
     """
 
     # give me a random key (bigram) from our dictionary
+    #link = choice(list(chains.keys()))
+    
+    # modified: give me a bigram iff choice(list(chains.keys()))[0][0].upper == choice(list(chains.keys()))[0][0]
+    # what does that mean?? 
+    # if the upper version of the first letter of the first tuple object is the
+    # same as the current first letter of the first tuple, it's a capital letter
+    # and can start our markov text.
     link = choice(list(chains.keys()))
+    starting_letter = link[0][0]
+
+    while starting_letter != starting_letter.upper() or not starting_letter.isalpha():
+        # if starting letter ('a') is different than upper ('A') 
+        # or
+        # if starting letter is not alpha ('-', '.', etc.) 
+        link = choice(list(chains.keys()))
+        starting_letter = link[0][0]
 
     words.append(link[0])
     words.append(link[1])
