@@ -42,10 +42,29 @@ def make_chains(text_string):
         >>> chains[('there','juanita')]
         [None]
     """
-
+    #text_string = open_and_read_file('green-eggs.txt')
     chains = {}
 
-    # your code goes here
+    """pseudocode
+    split on every whitespace character to get all words -> list of strings in order
+    create bigram: iterate over list of words (range is length of list)
+        for each index, access list[i] and list[i + 1]
+        create tuple of (list[i], list[i + 1]) -> tuple
+
+        add the tuple to the empty dictionary(chains[tuple] = chains.get(tuple, []).append(list[i + 2]))
+    """
+
+    words = text_string.split()
+
+    for i in range(len(words) - 1):
+        bigram = (words[i], words[i + 1])
+
+        if i < len(words) - 2:
+            chains[bigram] = chains.get(bigram, [])
+            chains[bigram].append(words[i + 2])
+        
+        else:
+            chains[bigram] = None
 
     return chains
 
