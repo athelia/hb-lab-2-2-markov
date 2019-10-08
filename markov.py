@@ -76,6 +76,31 @@ def make_text(chains):
 
     # your code goes here
 
+    """pseudocode
+    a link is: a tuple (key) + a random word from list (value) 
+    put this link in a container (our list called words)
+    random.choice(chains) -> yields a random tuple for our first link
+    first_word, second_word = tuple (unpacking)
+    words.extend(first_word, second_word)
+    get a random word from the list value: random.choice(chains[tuple])
+    words.append( ^ )
+    new tuple! is words[-2], words[-1]
+
+    rinse and repeat while chains[tuple] != None
+    """
+
+    # give me a random key (bigram) from our dictionary
+    link = choice(list(chains.keys()))
+
+    words.append(link[0])
+    words.append(link[1])
+
+    while chains[link] != None:
+        next_word = choice(chains[link])
+        words.append(next_word)
+        link = (words[-2], words[-1])
+
+
     return " ".join(words)
 
 
