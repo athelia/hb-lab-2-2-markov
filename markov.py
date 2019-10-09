@@ -77,7 +77,7 @@ def make_chains(text_string, n=2):
     return chains
 
 
-def make_text(chains, n=2):
+def make_text(chains, n=2, sentence_limit=5):
     """Return text from chains."""
 
     words = []
@@ -105,8 +105,10 @@ def make_text(chains, n=2):
     # if the upper version of4the first letter of the first tuple object is the
     # same as the current first letter of the first tuple, it's a capital letter
     # and can start our markov text.
+    end_punctuation = ".?!"
     link = choice(list(chains.keys()))
     starting_letter = link[0][0]
+    num_of_sentences = 0
 
     while starting_letter != starting_letter.upper() or not starting_letter.isalpha():
         # if starting letter ('a') is different than upper ('A') 
@@ -118,8 +120,11 @@ def make_text(chains, n=2):
     for i in range(n):
         words.append(link[i])
 
-    while chains[link] != None:
+    while chains[link] != None and num_of_sentences < sentence_limit:
         next_word = choice(chains[link])
+        # num_of_sentences += 1 if (next_word[-1] in end_punctuation)
+        if next_word[-1] in end_punctuation:
+            num_of_sentences += 1
         words.append(next_word)
         link = tuple(words[-n:])        
 
@@ -129,6 +134,8 @@ def make_text(chains, n=2):
 input_path = sys.argv[1]
 
 n = int(sys.argv[2])
+
+sentence_limit = int(sys.argv[3])
 
 # Open the file and turn it into one long string
 input_text = open_and_read_file(input_path)
