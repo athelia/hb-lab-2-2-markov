@@ -118,22 +118,10 @@ def make_text(chains, n=2):
     for i in range(n):
         words.append(link[i])
 
-        while chains[link] != None:
-            print(link,': ', chains[link])
-            next_word = choice(chains[link])
-            # print(next_word)
-            words.append(next_word)
-    #       sub_idx = -n --> -3
-    #       link = words[sub_idx] --> words[-n] --> words[-3]
-    #       while sub_idx > -2 --> if -3 > -2 --> if -2 > -2
-    #           link += (words[sub_idx],) --> link (our new tuple) += words[-3] --> link += words[-2]
-    #           sub_idx += 1 --> increment sub_idx, = -2 --> -2
-            sub_idx = -n
-            link = (words[sub_idx],)
-            while sub_idx > -2:
-                link += (words[sub_idx + 1],)
-                sub_idx += 1
-
+    while chains[link] != None:
+        next_word = choice(chains[link])
+        words.append(next_word)
+        link = tuple(words[-n:])        
 
     return " ".join(words)
 
