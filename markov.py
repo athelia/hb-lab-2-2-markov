@@ -18,7 +18,7 @@ def open_and_read_file(file_path):
     return text_file
 
 
-def make_chains(text_string):
+def make_chains(text_string, n=2):
     """Take input text as string; return dictionary of Markov chains.
 
     A chain will be a key that consists of a tuple of (word1, word2)
@@ -56,20 +56,28 @@ def make_chains(text_string):
 
     words = text_string.split()
 
-    for i in range(len(words) - 1):
-        bigram = (words[i], words[i + 1])
+    for i in range(len(words) - n + 1):
+        #pseudocode update:
+        # iterate over a new range using n 
+        # keep rebinding our tuple to have +1 entry at the end from our text string
+        # 
+        # bigram = (words[i], words[i + 1])
+        n_gram = (words[i], )
 
-        if i < len(words) - 2:
-            chains[bigram] = chains.get(bigram, [])
-            chains[bigram].append(words[i + 2])
+        for sub_idx in range(1, n):
+            n_gram += (words[i + sub_idx],)
+
+        if i < len(words) - n:
+            chains[n_gram] = chains.get(n_gram, [])
+            chains[n_gram].append(words[i + n])
         
         else:
-            chains[bigram] = None
+            chains[n_gram] = None
 
     return chains
 
 
-def make_text(chains):
+def make_text(chains, n=2):
     """Return text from chains."""
 
     words = []
@@ -94,7 +102,7 @@ def make_text(chains):
     
     # modified: give me a bigram iff choice(list(chains.keys()))[0][0].upper == choice(list(chains.keys()))[0][0]
     # what does that mean?? 
-    # if the upper version of the first letter of the first tuple object is the
+    # if the upper version of4the first letter of the first tuple object is the
     # same as the current first letter of the first tuple, it's a capital letter
     # and can start our markov text.
     link = choice(list(chains.keys()))
@@ -107,13 +115,24 @@ def make_text(chains):
         link = choice(list(chains.keys()))
         starting_letter = link[0][0]
 
-    words.append(link[0])
-    words.append(link[1])
+    for i in range(n):
+        words.append(link[i])
 
-    while chains[link] != None:
-        next_word = choice(chains[link])
-        words.append(next_word)
-        link = (words[-2], words[-1])
+        while chains[link] != None:
+            print(link,': ', chains[link])
+            next_word = choice(chains[link])
+            # print(next_word)
+            words.append(next_word)
+    #       sub_idx = -n --> -3
+    #       link = words[sub_idx] --> words[-n] --> words[-3]
+    #       while sub_idx > -2 --> if -3 > -2 --> if -2 > -2
+    #           link += (words[sub_idx],) --> link (our new tuple) += words[-3] --> link += words[-2]
+    #           sub_idx += 1 --> increment sub_idx, = -2 --> -2
+            sub_idx = -n
+            link = (words[sub_idx],)
+            while sub_idx > -2:
+                link += (words[sub_idx + 1],)
+                sub_idx += 1
 
 
     return " ".join(words)
@@ -121,13 +140,15 @@ def make_text(chains):
 
 input_path = sys.argv[1]
 
+n = int(sys.argv[2])
+
 # Open the file and turn it into one long string
 input_text = open_and_read_file(input_path)
 
 # Get a Markov chain
-chains = make_chains(input_text)
+chains = make_chains(input_text, n)
 
 # Produce random text
-random_text = make_text(chains)
+random_text = make_text(chains, n)
 
 print(random_text)
